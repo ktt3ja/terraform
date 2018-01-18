@@ -64,6 +64,8 @@ func initCommands(config *Config) {
 		PluginCacheDir:      config.PluginCacheDir,
 		OverrideDataDir:     dataDir,
 
+		AwsTagsResourceFilter: awsTagsResourceTypeFilter(),
+
 		ShutdownCh: makeShutdownCh(),
 	}
 

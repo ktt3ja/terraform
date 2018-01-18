@@ -878,7 +878,7 @@ func TestPlan_shutdown(t *testing.T) {
 
 	select {
 	case <-cancelled:
-	case <-time.After(5 * time.Second):
+	case <-time.After(10 * time.Second):
 		t.Fatal("command not cancelled")
 	}
 }

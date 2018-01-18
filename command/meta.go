@@ -76,6 +76,10 @@ type Meta struct {
 	// is not suitable, e.g. because of a read-only filesystem.
 	OverrideDataDir string
 
+	// AwsTagsResourceFilter is a set of AWS resource types that we look
+	// to inject tags to.
+	AwsTagsResourceFilter map[string]bool
+
 	// When this channel is closed, the command will be cancelled.
 	ShutdownCh <-chan struct{}
 
@@ -110,6 +114,9 @@ type Meta struct {
 	autoVariables map[string]interface{}
 	input         bool
 	variables     map[string]interface{}
+
+	// Custom AWS tags for plan or apply command (private)
+	awsTags map[string]interface{}
 
 	// Targets for this context (private)
 	targets []string
@@ -316,6 +323,7 @@ func (m *Meta) flagSet(n string) *flag.FlagSet {
 	f.BoolVar(&m.input, "input", true, "input")
 	f.Var((*variables.Flag)(&m.variables), "var", "variables")
 	f.Var((*variables.FlagFile)(&m.variables), "var-file", "variable file")
+	f.Var((*variables.Flag)(&m.awsTags), "aws-tag", "tags for AWS resources")
 	f.Var((*FlagStringSlice)(&m.targets), "target", "resource to target")
 
 	if m.autoKey != "" {

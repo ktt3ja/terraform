@@ -904,6 +904,29 @@ func (c *Config) InterpolatedVariables() map[string][]InterpolatedVariable {
 	return result
 }
 
+// AppendTagsToAwsResources scans through the config for resources of type found
+// in resourceTypeFilter and apply tags to their "tags" attributes.
+func (c *Config) AppendTagsToAwsResources(tags map[string]interface{}, resourceTypeFilter map[string]bool) {
+	for _, resource := range c.Resources {
+		if resourceTypeFilter[resource.Type] {
+			rawConfigMap := resource.RawConfig.Raw
+
+			var tagMap []map[string]interface{}
+			if rawConfigMap["tags"] == nil {
+				tagMap = make([]map[string]interface{}, 1)
+				tagMap[0] = make(map[string]interface{})
+				rawConfigMap["tags"] = tagMap
+			} else {
+				tagMap = rawConfigMap["tags"].([]map[string]interface{})
+			}
+
+			for tagKey, tagValue := range tags {
+				tagMap[0][tagKey] = tagValue
+			}
+		}
+	}
+}
+
 // rawConfigs returns all of the RawConfigs that are available keyed by
 // a human-friendly source.
 func (c *Config) rawConfigs() map[string]*RawConfig {

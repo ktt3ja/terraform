@@ -87,6 +87,11 @@ func (c *PlanCommand) Run(args []string) int {
 	if mod != nil {
 		conf = mod.Config()
 	}
+
+	if conf != nil && len(c.awsTags) > 0 {
+		conf.AppendTagsToAwsResources(c.awsTags, c.AwsTagsResourceFilter)
+	}
+
 	// Load the backend
 	b, err := c.Backend(&BackendOpts{
 		Config: conf,
@@ -165,6 +170,8 @@ Usage: terraform plan [options] [DIR-OR-PLAN]
   the saved plan contents. It will not modify the given plan.
 
 Options:
+
+  -aws-tag 'foo=bar'  Set a tag to inject to eligible AWS resource types
 
   -destroy            If set, a plan will be generated to destroy all resources
                       managed by the given configuration and state.

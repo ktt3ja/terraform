@@ -138,6 +138,10 @@ func (c *ApplyCommand) Run(args []string) int {
 		conf = mod.Config()
 	}
 
+	if conf != nil && len(c.awsTags) > 0 {
+		conf.AppendTagsToAwsResources(c.awsTags, c.AwsTagsResourceFilter)
+	}
+
 	// Load the backend
 	b, err := c.Backend(&BackendOpts{
 		Config: conf,
@@ -241,6 +245,8 @@ Usage: terraform apply [options] [DIR-OR-PLAN]
   used to only execute a pre-determined set of actions.
 
 Options:
+
+  -aws-tag 'foo=bar'     Set a to inject to eligible AWS resource types
 
   -backup=path           Path to backup the existing state file before
                          modifying. Defaults to the "-state-out" path with
